@@ -2,10 +2,6 @@ name: CI
 
 on:
   push:
-    branches:
-    - master
-    tags:
-    - '*'
   pull_request:
 
 jobs:
@@ -64,6 +60,7 @@ jobs:
         else
             brew install meson
         fi
+
     - name: configure
       run: meson setup builddir
     - name: build
