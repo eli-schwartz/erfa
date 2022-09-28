@@ -39,3 +39,36 @@ jobs:
       run: make check
     - name: make distcheck
       run: make distcheck
+
+  tests-meson:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux (with gcc)
+            os: ubuntu-latest
+
+          - name: MacOS (with clang)
+            os: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Install dependencies
+      run: |
+        if [ "$RUNNER_OS" = Linux ]; then
+            sudo apt-get -y install meson ninja-build
+        else
+            brew install meson
+        fi
+    - name: configure
+      run: meson setup builddir
+    - name: build
+      run: ninja -C builddir
+    - name: check
+      run: meson test -C builddir
+    - name: distcheck
+      run: meson dist -C builddir
